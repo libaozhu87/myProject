@@ -1,6 +1,6 @@
 // JavaScript Document
 
-var CopyWayAs = function(){
+var canvasJs = function(){
 	var LEGEND_FILE_PHP = './php/file.php';
 	var OS_PC = "pc";
 	var OS_IPHONE = "iPhone";
