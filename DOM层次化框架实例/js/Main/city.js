@@ -11,7 +11,6 @@ city = (function () {
         }, 100);
     }
     function loadData(aa) {
-        alert(aa)
     }
    
 	/*按钮绑定*/

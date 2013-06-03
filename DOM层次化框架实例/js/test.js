@@ -54,9 +54,6 @@ var modeConfig = {"Main":{
                         "loadData":function(pars){city.loadData(pars)},						
 						"initData":function(cityEle){city.initData(cityEle)},
 						"htmlStr":HtmlObj["city"],
-						"beginCss":"normal",
-						"showWay":"normal",
-						"closeWay":"normal"
                     },
 					"ectype":{
 					    "js": "js/Main/ectype.js",
