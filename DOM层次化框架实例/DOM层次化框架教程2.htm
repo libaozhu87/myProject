@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+</head>
+
+<body>
+<pre><code>           #
+</code></pre>
+<h1>DOM开发层次化框架</h1>
+<h2>概述：</h2>
+
+<blockquote>
+  <p>此框架为JQ 类级插件  开发此框架目的为简化WEB 应用的开发， 力求于符合MVC思想</p>
+</blockquote>
+
+<h2>功能：</h2>
+
+<blockquote>
+  <ul>
+  <li>DOM树结构层次化编写</li>
+  <li>DOM 编程的模块化加载和管理 </li>
+  <li>DOM 视图的多样式组合显示</li>
+  </ul>
+</blockquote>
+
+<h2>实例教程</h2>
+
+<p>废话不说了现在开始简单的教程， 本人善有自知之明，不求能写的绘声绘色，努力保证大家看懂 下面以一个简单例子开始。</p>
+
+<blockquote>
+  <ul>
+  <li>我们假设是在做一个 游戏类应用我们把这个游戏大致分为城镇和副本2个主要部分，其下的字部分分别为建筑,军队以及地下城,山洞.  结构如下
+  <ol><li>城镇(city) 
+  <ul><li>建筑（build)</li>
+  <li>军队（arm）</li></ul></li>
+  <li>副本（ectype）
+  <ul><li>地下城（underground）</li>
+  <li>山洞（cave)</li></ul></li></ol></li>
+  </ul>
+</blockquote>
+
+<p>从正常的逻辑上来说城镇(city)和副本（ectype是在同一层级,并具有相同的显示效果. 我们且为他们定义 <strong>Main模块</strong> ;同理建筑（build），军队（arm），地下城（underground），山洞（cave）我们为他们定义 <strong>Child模块</strong>;</p>
+
+<p>---------------文件结构如下----------------------------
+<img src="images/form.jpg" alt="sdsa" title="" /></p>
+
+<p>---------------编写 test.html文件内容如图----------------------------</p>
+
+<pre><code>&lt;!doctype html&gt;
+    &lt;html&gt;
+        &lt;head&gt;
+        &lt;meta charset="utf-8"&gt;
+        &lt;title&gt;无标题文档&lt;/title&gt;
+        &lt;link rel="stylesheet" type="text/css"  href="css/style.css"&gt;
+        &lt;script src="js/JQ.js"&gt;&lt;/script&gt;
+        &lt;script src="js/DOME.js" &gt;&lt;/script&gt;
+        &lt;script src="js/test.js"&gt;&lt;/script&gt;
+        &lt;/head&gt;
+        &lt;body&gt;
+        &lt;div id="Game"&gt;
+            &lt;div id = "Main"&gt;&lt;/div&gt;
+            &lt;div id = "Child"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;/body&gt;
+    &lt;/html&gt;
+</code></pre>
+
+<p>在此页面 我们中导入了三个script 文件 分别是
+JQ.js (JQuery 库)， DOME.js(层次化框架)，test.js(测试文件);
+按照刚才的逻辑 我们在 Game层下把它分成了2层 为Main 和 Child 层;</p>
+
+<pre><code>&lt;div id = "Main"&gt;&lt;/div&gt;
+&lt;div id = "Child"&gt;&lt;/div&gt;
+</code></pre>
+
+<p>接下来分3步奏</p>
+
+<h2>1.配置</h2>
+
+<h4>(1)模块的配置</h4>
+
+<blockquote>
+  <p>在test,js 中 对2个模块进行配置设置. 配置格式为   var  modeConfig = {“模块名”:{“该某块下的具体选项”}}</p>
+</blockquote>
+
+<h5>在该例子中配置结构如下</h5>
+
+<pre><code>modeConfig = {"Main":{"city" : "city配置","ectype" : ""},
+             "Child":{"build" : " ","arm" : "","cave" : " ",
+                       "underground": " " }
+             }
+</code></pre>
+
+<h5>City的具体格式为</h5>
+
+<pre><code>              "city": {
+                    "js": "js/Main/city.js",
+                    "css": "css/city.css",
+                    "loadData":function(pars){city.loadData(pars)},                        
+                    "initData":function(cityEle){city.initData(cityEle)},
+                    "htmlStr":HtmlObj["city"],
+                    "beginCss":"normal",
+                    "showWay":"normal",
+                    "closeWay":"normal"
+                }
+
+                //HtmlObj["city"]结构
+            var HtmlObj = {"city":'&lt;div class = "city" &gt;\
+               &lt;p&gt;城镇主页面&lt;/p&gt;\
+               &lt;div id = "nav"&gt;\
+                   &lt;input id="build" type="button" value="建筑"/&gt;\
+                   &lt;input id="arm" type="button" value="军队"/&gt;\
+                   &lt;input id="ectype" type="button" value="副本"/&gt;\
+               &lt;div&gt;\
+             &lt;/div&gt;',
+            }
+</code></pre>
+
+<ul>
+<li>Js ：city.js 文件的路径;</li>
+<li>css ： city.css 文件的路径;</li>
+<li>initData ：city 加载时需要执行的代码,  参数 cityEle表示JQ对象 city的DOM元素；  </li>
+<li>loadData ： city 显示时 需要执行的代码, 参数pars表示显示时调用的所传递的参数</li>
+<li>htmlStr  ：city 的 DOM 结构; 本人把它放到一个对象中</li>
+<li>beginCss： 针对city 开始显示时的样式，需要配置（下面会提到） 默认为“noraml”</li>
+<li>showWay : 针对city 界面出现时的显示形式 ，需要配置（下面会提到） 默认为“noraml”</li>
+<li>closeWay : 针对city 界面出现时的关闭形式 ，需要配置（下面会提到） 默认为“noraml”</li>
+</ul>
+
+<h5>设置好配置以后 加载配置</h5>
+
+<pre><code>$.MODE.initConfig(modeConfig);
+</code></pre>
+
+<p>initConfig 函数的细图
+    <img src="images/initConfig.jpg" alt="sdsa" title="" /></p>
+
+<h4>(2)显示方式的配置</h4>
+
+<blockquote>
+  <p>配置显示方式的目的是为提供显示方式的选择，实现灵活的显示方式的搭配；
+  配置格式为 var moveStyleConfig = {“显示方式名”:{此方式名下的具体显示方式类别}}；</p>
+</blockquote>
+
+<h5>在该例子中的配置格式如下</h5>
+
+<pre><code>var    moveStyleConfig = {
+        "sild":{
+                "beginCss":{"left":"640px"},
+                "showWay":{ "left": "0px"},
+                "colseWay":{"left":"-640px"},
+                "runTime":500,
+               },
+            }
+</code></pre>
+
+<ul>
+<li>Sild 为 显示方式名；</li>
+<li>beginCss :  为开始显示时的样式， 配置的值遵循css 属性格式；</li>
+<li>showWay : 具体界面出现时的显示形式，配置的值遵循css 属性 ；</li>
+<li>closeWay : 具体界面关闭时的显示形式，配置的值遵循css 属性 ；</li>
+<li>runTime : 显示完成所需的时间（ms）默认为500ms;</li>
+</ul>
+
+<h4>加载显示配置</h4>
+
+<pre><code>$.MODE.setStyle(moveStyleConfig);
+</code></pre>
+
+<hr />
+
+<h2>2.创建模块</h2>
+
+<p>配置好了模块 以后 接下来就是 创建 Main 和Child 具体的模块</p>
+
+<pre><code>var mainMode = $.MODE.createMode("Main","sild");
+var childMode = $.MODE.createMode("Child","salce");
+</code></pre>
+
+<h6>createMode函数的细图　</h6>
+
+<p><img src="images/createMode.jpg" alt="sdsa" title="" /></p>
+
+<p><strong>此方法的第2个参数为此模块的显示方式, 作用范围为此模块的下的所有配置选项,如果要针对该模块特定的选项进行显示方式的设置的话, 请在具体的选项下进行 beginCss，showWay ，closeWay 的设置 如</strong></p>
+
+<pre><code>"city": {
+"js": "js/Main/city.js",
+"css": "css/city.css",
+"loadData":function(pars){city.loadData(pars)},                        
+"initData":function(cityEle){city.initData(cityEle)},
+"htmlStr":HtmlObj["city"],
+"beginCss":"dorp",
+"showWay":"sild",
+"closeWay":"dorp"
+},
+</code></pre>
+
+<h2>3. 运行模块</h2>
+
+<h4>(1) load  加载具体模块的某项配置选项</h4>
+
+<pre><code>//直接加载并且显示 
+mainMode.load("city","#Main","我是城镇在显示的时候调用的哦",true,true)
+//进行预加载 模式
+mainMode.load("ectype") 
+childMode.load("arm")
+childMode.load("build")
+childMode.load("cave")
+childMode.load("underground")
+</code></pre>
+
+<p>　　Load函数的细图
+　　<img src="images/load.jpg" alt="sdsa" title="" /></p>
+
+<h4>(2) show 显示具体模块的某项配置选项</h4>
+
+<pre><code>childMode.show("build","#Child");
+</code></pre>
+
+<p>　　show函数的细图
+　　<img src="images/show.jpg" alt="sdsa" title="" />　　</p>
+
+<h4>(3) close 关闭具体模块的某项配置选项</h4>
+
+<pre><code>childMode.close("arm")
+</code></pre>
+
+<p>　　close函数的细图
+　　<img src="images/close.jpg" alt="sdsa" title="" />　　    </p>
+
+<h3>结束语</h3>
+
+<p>模块的运用总流程为 先加载模块配置 --》加载显示方式配置（可选）--》创建模块———》 加载模块 --》显示模块———》关闭模块、</p>
+
+<h3>附加信息</h3>
+
+<ul>
+<li>下载地址：<a href="https://github.com/libaozhu87/myProject">GitHub</a></li>
+<li>作者 ：zhangHong</li>
+<li>联系 ：QQ  230878328</li>
+<li>座右铭：人外有人 天外有天</li>
+</ul>
+</body>
+</html>
