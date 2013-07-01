@@ -21,7 +21,7 @@ Ext.define('GS.store.listStore', {
         autoLoad: true,
         proxy: {
             type: 'ajax',
-            url: 'data/list.json',
+            url: 'data/myList.json',
             reader: {
                 type: 'json',
                 rootProperty: 'list'
